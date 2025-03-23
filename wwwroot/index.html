@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Financial Twin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background-color: #000;
+      overflow: hidden;
+      color: white;
+    }
+
+    canvas#particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-section {
+      position: absolute;
+      top: 37.5%; /* 上 3/8 屏幕处 */
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 1;
+      padding: 2rem;
+    }
+
+    .hero-title {
+      font-size: 4rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #ff5edb, #8a2be2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.75rem;
+      color: #ccccff;
+      margin-bottom: 2rem;
+    }
+
+    .btn-start {
+      font-size: 1.25rem;
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 6px;
+      background: linear-gradient(to right, #8a2be2, #ff5edb);
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn-start:hover {
+      background: linear-gradient(to right, #ff5edb, #8a2be2);
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <section class="hero-section">
+    <h1 class="hero-title">Welcome to Financial Twin</h1>
+    <h2 class="hero-subtitle">A powerful mirror of your financial future ✨</h2>
+    <a href="/home" class="btn-start"> Get Started</a>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80 },
+        color: { value: ["#8a2be2", "#ff5edb"] },
+        shape: { type: "circle" },
+        opacity: { value: 0.6 },
+        size: { value: 3 },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#888",
+          opacity: 0.4,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 1.5,
+          direction: "none",
+          random: false,
+          straight: false,
+          out_mode: "out"
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "grab" },
+          onclick: { enable: true, mode: "push" },
+          resize: true
+        },
+        modes: {
+          grab: { distance: 140, line_linked: { opacity: 0.5 } },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
+</body>
+</html>

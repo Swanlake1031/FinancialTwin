@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Broke No More</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: #000;
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      color: white;
+    }
+
+    canvas#particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 8vh;
+    }
+
+    .title {
+      font-size: 4.2rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #6ec0ff, #b075ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(130, 80, 255, 0.8);
+      margin-bottom: 6vh;
+    }
+
+    .box-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4vw;
+      margin-top: 2vh;
+      padding: 0 4vw;
+    }
+
+    .box {
+      width: 40vw;
+      height: 50vh;
+      background-color: #1a1a1a;
+      border: 3px solid #d472ff;
+      box-shadow: 0 0 25px rgba(212, 114, 255, 0.7);
+      border-radius: 18px;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateX(-30px);
+      color: #000;
+      animation: fadeInItem 1s ease-out forwards;
+    }
+
+    @keyframes fadeInItem {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+        color: #000;
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+        color: #fff;
+      }
+    }
+
+    .item-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.2rem;
+      color: #ff9aff;
+    }
+
+    .item-value {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: #ccc;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles-js"></canvas>
+
+  <div class="content">
+    <div class="title">Broke No More</div>
+    <div class="box-container">
+      <div id="left" class="box"></div>
+      <div id="right" class="box"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80 },
+        color: { value: ["#8a2be2", "#ff5edb"] },
+        shape: { type: "circle" },
+        opacity: { value: 0.6 },
+        size: { value: 3 },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#888",
+          opacity: 0.4,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 1.5,
+          direction: "none",
+          random: false,
+          straight: false,
+          out_mode: "out"
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "grab" },
+          onclick: { enable: true, mode: "push" },
+          resize: true
+        },
+        modes: {
+          grab: { distance: 140, line_linked: { opacity: 0.5 } },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+
+    // ✅ 自动 fetch 分析额外数据并填入左右容器
+    window.addEventListener("DOMContentLoaded", async () => {
+      const left = document.getElementById("left");
+      const right = document.getElementById("right");
+
+      try {
+        const res = await fetch("/api/analysis_extra");
+        const data = await res.json();
+
+        const keys = Object.keys(data);
+        const mid = Math.ceil(keys.length / 2);
+
+        keys.forEach((key, index) => {
+          const container = index < mid ? left : right;
+          const wrapper = document.createElement("div");
+          wrapper.classList.add("fade-in");
+
+          const title = document.createElement("div");
+          title.className = "item-title";
+          title.textContent = key;
+
+          const value = document.createElement("div");
+          value.className = "item-value";
+
+          if (typeof data[key] === "object") {
+            value.innerHTML = Object.entries(data[key])
+              .map(([k, v]) => `${k}: ${v}`)
+              .join("<br>");
+          } else {
+            value.textContent = data[key];
+          }
+
+          wrapper.appendChild(title);
+          wrapper.appendChild(value);
+          container.appendChild(wrapper);
+        });
+      } catch (err) {
+        left.innerHTML = "<p>❌ 加载失败</p>";
+        right.innerHTML = "<p>❌ 加载失败</p>";
+        console.error("加载失败：", err);
+      }
+    });
+  </script>
+</body>
+</html>

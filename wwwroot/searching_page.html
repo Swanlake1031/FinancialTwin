@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Financial Twin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 2rem;
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background-color: #000;
+      color: white;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .page-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+      text-align: center;
+    }
+
+    .main-title {
+      font-size: 4.8rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #ff5edb, #8a2be2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 4rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .subtitle {
+      font-size: 1.8rem;
+      color: #ccccff;
+      margin-bottom: 3rem;
+    }
+
+    .input-bar {
+      width: 100%;
+      max-width: 880px;
+      height: 90px;
+      background-color: white;
+      border-radius: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 24px;
+      box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
+      margin-bottom: 1rem;
+    }
+
+    .plus-button {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid #888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #888;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    #uploaded-filename {
+      margin-left: 16px;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    .loading-container {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    .spinner {
+      border: 4px solid #333;
+      border-top: 4px solid #ff5edb;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .info-text {
+      font-size: 0.78rem;
+      color: #cccccc;
+      max-width: 720px;
+      line-height: 1.45;
+      text-align: left;
+      margin-bottom: 2rem;
+    }
+
+    .info-text strong {
+      color: #ff5edb;
+    }
+
+    .info-text ul {
+      margin-top: 0.4rem;
+      padding-left: 1.2rem;
+    }
+
+    .info-text li {
+      margin-bottom: 0.3rem;
+    }
+
+    #file-info {
+      display: none;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    #remove-file {
+      margin-left: 12px;
+      background: none;
+      border: none;
+      color: #ff6d8d;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    #submit-btn {
+      padding: 12px 24px;
+      font-size: 1rem;
+      background-color: #ff5edb;
+      border: none;
+      border-radius: 24px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(255, 94, 219, 0.4);
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="page-wrapper">
+    <div>
+      <h1 class="main-title">Financial Twin</h1>
+      <h2 class="subtitle">Let's analyze your spending habits</h2>
+      <div class="input-bar">
+        <button class="plus-button">+</button>
+        <span id="uploaded-filename"></span>
+      </div>
+
+      <div id="file-info">
+        <span id="file-name"></span>
+        <button id="remove-file">❌ Remove</button>
+      </div>
+
+      <button id="submit-btn">Submit</button>
+
+      <div id="loading-message" class="loading-container">
+        <div class="spinner"></div>
+        <p style="color:#ccc; font-size: 0.95rem;">Analyzing your data...</p>
+      </div>
+    </div>
+
+    <div class="info-text">
+      <p>Want to know if your spending habits are helping or hurting your future?</p>
+      <p><strong>Financial Twin</strong> is an AI-powered tool that analyzes your bank transactions and predicts whether you can reach big financial goals — like buying a car or house.</p>
+      <p>Upload your bank statement and see:</p>
+      <ul>
+        <li>When you’ll realistically reach your goals</li>
+        <li>How changing small habits (like saving more or spending less) can move that timeline</li>
+        <li>A side-by-side comparison of your current path vs a smarter one — your "Financial Twin"</li>
+      </ul>
+      <p>Make better decisions today by exploring smarter versions of your financial future.</p>
+    </div>
+    <a href="/detail" class="btn-start">If you uploaded the file ,click here</a>
+  </div>
+
+  <!-- 粒子背景 -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 180 },
+        color: { value: ["#8a2be2", "#ff5edb"] },
+        shape: { type: "circle" },
+        opacity: { value: 0.7 },
+        size: { value: 6 },
+        line_linked: {
+          enable: true,
+          distance: 130,
+          color: "#888",
+          opacity: 0.3,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 1.3,
+          direction: "none",
+          out_mode: "out"
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "grab" },
+          onclick: { enable: true, mode: "push" },
+          resize: true
+        },
+        modes: {
+          grab: { distance: 150, line_linked: { opacity: 0.5 } },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+
+    const uploadInput = document.createElement("input");
+    uploadInput.type = "file";
+    uploadInput.accept = ".pdf";
+    uploadInput.style.display = "none";
+
+    const plusButton = document.querySelector(".plus-button");
+    const uploadedFilename = document.getElementById("uploaded-filename");
+    const loading = document.getElementById("loading-message");
+    const fileInfo = document.getElementById("file-info");
+    const fileNameSpan = document.getElementById("file-name");
+    const removeFileBtn = document.getElementById("remove-file");
+    const submitButton = document.getElementById("submit-btn");
+
+    let selectedFile = null;
+
+    plusButton.addEventListener("click", () => {
+      uploadInput.click();
+    });
+
+    uploadInput.addEventListener("change", () => {
+      const file = uploadInput.files[0];
+      if (!file) return;
+
+      if (!file.name.toLowerCase().endsWith(".pdf")) {
+        alert("Only PDF files are allowed.");
+        return;
+      }
+
+      selectedFile = file;
+      uploadedFilename.textContent = file.name;
+      fileNameSpan.textContent = "Uploaded: " + file.name;
+      fileInfo.style.display = "block";
+    });
+
+    submitButton.addEventListener("click", async () => {
+      if (!selectedFile) {
+        alert("Please select a PDF file first.");
+        return;
+      }
+
+      loading.style.display = "block";
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      try {
+        const response = await fetch("/api/bill_upload", {
+          method: "POST",
+          body: formData
+        });
+
+        const result = await response.json();
+        console.log("Upload result:", result);
+        alert("Upload successful!");
+      } catch (err) {
+        console.error("Upload failed:", err);
+        alert("Failed to upload file.");
+      }
+
+      loading.style.display = "none";
+    });
+
+    removeFileBtn.addEventListener("click", () => {
+      uploadInput.value = "";
+      selectedFile = null;
+      uploadedFilename.textContent = "";
+      fileInfo.style.display = "none";
+      loading.style.display = "none";
+    });
+
+    document.body.appendChild(uploadInput);
+  </script>
+</body>
+</html>
