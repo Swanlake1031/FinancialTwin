@@ -23,23 +23,19 @@ if not os.path.exists(data_path):
     sys.exit(1)
 
 
-df = pd.read_csv(data_path)  # 真實 + 合成資料，共 15 個月
+df = pd.read_csv(data_path)  
 
-# === 步驟 2：資料前處理 ===
 df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
 df = df.dropna(subset=["amount"])
 
-# Pivot 成 wide format（每列是一個月，每欄是一個子類別）
 data = df.pivot_table(index="month", columns="sub_category", values="amount", aggfunc="sum", fill_value=0)
 data = data.sort_index(key=lambda x: pd.to_datetime(x, format='%B'))
 
-# 標準化數據
 scaler = MinMaxScaler()
 data_scaled = scaler.fit_transform(data)
 
-# === 步驟 3：建立序列資料（多步預測） ===
 X, y = [], []
-input_len = 6   # 用過去 6 個月
+input_len = 6   
 output_len = 6  # 預測未來 6 個月
 
 if len(data_scaled.shape) < 2:
@@ -56,7 +52,6 @@ X, y = np.array(X), np.array(y)
 if X.shape[0] == 0:
     raise ValueError("❌ 無法產生訓練樣本，請確認資料量是否足夠與 input/output 長度是否合理")
 
-# === 步驟 4：構建 Attention-enhanced Seq2Seq LSTM 模型 ===
 inputs = Input(shape=(input_len, n_features))
 x = LayerNormalization()(inputs)
 x = LSTM(128, return_sequences=True)(x)
@@ -80,7 +75,6 @@ model = Model(inputs, out)
 model.compile(optimizer='adam', loss='mse')
 model.summary()
 
-# === 步驟 5：訓練模型 ===
 if X.shape[0] > 1:
     history = model.fit(
         X, y,
@@ -97,7 +91,6 @@ else:
         verbose=1
     )
 
-# === 步驟 6：預測未來 output_len 個月 ===
 pred = model.predict(X[-1:])  # 用最後一筆作預測
 pred_unscaled = scaler.inverse_transform(pred[0])
 
@@ -106,23 +99,19 @@ month_order = list(pd.date_range("2025-01-01", periods=output_len, freq='MS').st
 pred_df = pd.DataFrame(pred_unscaled, columns=data.columns)
 pred_df.insert(0, "month", month_order)
 
-# === 步驟 7：輸出結果 ===
 output_path = os.path.join(BASE_DIR, "ai", "lstm_predicted_next_6_months.csv")
 pred_df.to_csv(output_path, index=False)
 print(f"✅ 預測完成，已儲存至 {output_path}")
 
-# === 步驟 8：分析預測結果 & 節省建議 ===
 subcat_summary = pred_df.drop(columns=["month"]).sum().sort_values(ascending=False)
 print("🔍 未來 6 個月預測支出（前幾名）:")
 print(subcat_summary.head(5))
 
-# 設定節省目標
 target_saving = 600
 reduction_plan = (subcat_summary.head(5) / subcat_summary.head(5).sum()) * target_saving
 print("\n💡 建議節省金額：")
 print(reduction_plan)
 
-# 模擬新支出
 adjusted_pred = pred_df.copy()
 for subcat, reduce_amount in reduction_plan.items():
     monthly_reduce = reduce_amount / output_len
