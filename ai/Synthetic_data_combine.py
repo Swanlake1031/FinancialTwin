@@ -4,7 +4,7 @@ import pandas as pd
 import random
 import sys
 
-# 🔧 專案根目錄
+#  專案根目錄
 try:
     CURRENT_FILE = __file__
 except NameError:
@@ -13,7 +13,6 @@ except NameError:
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(CURRENT_FILE), ".."))
 process_dir = os.path.join(BASE_DIR, "process")
 
-# ➤ 載入真實資料作為統計參考
 real_path = os.path.join(process_dir, "monthly_aggregated_by_category.csv")
 if not os.path.exists(real_path):
     print(f"❌ 找不到真實資料檔案：{real_path}")
@@ -21,18 +20,15 @@ if not os.path.exists(real_path):
 
 real_df = pd.read_csv(real_path)
 
-# ➤ 計算每個 (main, sub) 的平均值（忽略月份）
 mean_by_category = (
     real_df.groupby(["main_category", "sub_category"])["amount"]
     .mean()
     .reset_index()
 )
 
-# ➤ 產生月份清單
 months = ["January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December"]
 
-# ➤ 生成合成資料
 rows = []
 for month in months:
     for _, row in mean_by_category.iterrows():
